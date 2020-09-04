@@ -33,7 +33,7 @@ variables:
   # The tag for the docker images.  Set to the Git SHA
   TAG: $(Build.SourceVersion)
 
-pool: 'Default'
+pool: 'windows-latest'
 
 steps:
   - script: "Hello World"
