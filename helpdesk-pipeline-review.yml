@@ -1,0 +1,71 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - '*'
+    exclude:
+    - master
+    - develop
+    - release
+  paths:
+    include:
+    - 'apps/helpdesk/*'
+    - 'pipelines/helpdesk/*'
+    - 'pipelines/core/helm3_template.yaml'
+    - 'pipelines/core/docker_template.yaml'
+    exclude:
+    - '*'
+
+pr: none
+
+variables:
+  # The K8S Cluster to deploy the release to
+  DEVCONTEXT: eks-us-west-2-testing
+  STAGECONTEXT: eks-us-west-2-non-prod
+  # The K8S Namespace to put the deployment in
+  DEV_NAMESPACE: testing-helpdesk
+  # The Azure Service connection to use to push the docker images
+  DOCKER_REGISTRY_SERVICE_CONNECTION:  harbor-us-west-2-helpdesk
+  # The tag for the docker images.  Set to the Git SHA
+  TAG: $(Build.SourceVersion)
+
+pool: 'Default'
+
+stages:
+  - stage: 'Build_Helpdesk_API'
+    displayName: Helpdesk-API Docker Image Build
+    jobs:
+    - template: ../core/docker_template.yaml
+      parameters:
+        registry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
+        tag: $(TAG)
+        dockerFile: 'docker/api/Dockerfile'
+        lernaProject: helpdesk-api
+        npmToken: $(NPM_TOKEN)
+  - stage: 'Build_Helpdesk_UI'
+    displayName: Helpdesk-UI Docker Image Build
+    jobs:
+    - template: ../core/docker_template.yaml
+      parameters:
+        registry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
+        tag: $(TAG)
+        dockerFile: 'docker/mono-static-build/Dockerfile'
+        lernaProject: helpdesk-ui
+        npmToken: $(NPM_TOKEN)
+  - stage: 'Deploy_Helpdesk_Development'
+    displayName: Devload Helpdesk Deploy
+    jobs:
+    - template: ../core/helm3_template.yaml
+      parameters:
+        deployment: HelmDeploy
+        environment: dev
+        context: $(DEVCONTEXT)
+        namespace: $(DEV_NAMESPACE)
+        release: development-helpdesk
+        valuesFile: devload.yaml
+        chartPath: 'apps/helpdesk/charts/helpdesk'
+        overrideValues: 'helpdesk-ui.webUI.tag=$(TAG),helpdesk-api.api.tag=$(TAG)'
