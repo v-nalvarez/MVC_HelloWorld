@@ -35,37 +35,40 @@ variables:
 
 pool: 'Default'
 
-stages:
-  - stage: 'Build_Helpdesk_API'
-    displayName: Helpdesk-API Docker Image Build
-    jobs:
-    - template: ../core/docker_template.yaml
-      parameters:
-        registry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
-        tag: $(TAG)
-        dockerFile: 'docker/api/Dockerfile'
-        lernaProject: helpdesk-api
-        npmToken: $(NPM_TOKEN)
-  - stage: 'Build_Helpdesk_UI'
-    displayName: Helpdesk-UI Docker Image Build
-    jobs:
-    - template: ../core/docker_template.yaml
-      parameters:
-        registry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
-        tag: $(TAG)
-        dockerFile: 'docker/mono-static-build/Dockerfile'
-        lernaProject: helpdesk-ui
-        npmToken: $(NPM_TOKEN)
-  - stage: 'Deploy_Helpdesk_Development'
-    displayName: Devload Helpdesk Deploy
-    jobs:
-    - template: ../core/helm3_template.yaml
-      parameters:
-        deployment: HelmDeploy
-        environment: dev
-        context: $(DEVCONTEXT)
-        namespace: $(DEV_NAMESPACE)
-        release: development-helpdesk
-        valuesFile: devload.yaml
-        chartPath: 'apps/helpdesk/charts/helpdesk'
-        overrideValues: 'helpdesk-ui.webUI.tag=$(TAG),helpdesk-api.api.tag=$(TAG)'
+steps:
+  - script: "Hello World"
+
+# stages:
+#   - stage: 'Build_Helpdesk_API'
+#     displayName: Helpdesk-API Docker Image Build
+#     jobs:
+#     - template: ../core/docker_template.yaml
+#       parameters:
+#         registry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
+#         tag: $(TAG)
+#         dockerFile: 'docker/api/Dockerfile'
+#         lernaProject: helpdesk-api
+#         npmToken: $(NPM_TOKEN)
+#   - stage: 'Build_Helpdesk_UI'
+#     displayName: Helpdesk-UI Docker Image Build
+#     jobs:
+#     - template: ../core/docker_template.yaml
+#       parameters:
+#         registry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
+#         tag: $(TAG)
+#         dockerFile: 'docker/mono-static-build/Dockerfile'
+#         lernaProject: helpdesk-ui
+#         npmToken: $(NPM_TOKEN)
+#   - stage: 'Deploy_Helpdesk_Development'
+#     displayName: Devload Helpdesk Deploy
+#     jobs:
+#     - template: ../core/helm3_template.yaml
+#       parameters:
+#         deployment: HelmDeploy
+#         environment: dev
+#         context: $(DEVCONTEXT)
+#         namespace: $(DEV_NAMESPACE)
+#         release: development-helpdesk
+#         valuesFile: devload.yaml
+#         chartPath: 'apps/helpdesk/charts/helpdesk'
+#         overrideValues: 'helpdesk-ui.webUI.tag=$(TAG),helpdesk-api.api.tag=$(TAG)'
