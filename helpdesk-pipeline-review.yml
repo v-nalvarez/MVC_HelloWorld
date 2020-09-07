@@ -37,7 +37,7 @@ pool:
  vmimage: 'windows-2019'
 
 steps:
-  - script: 'Hello World'
+  - script: echo 'Hello World'
 
 # stages:
 #   - stage: 'Build_Helpdesk_API'
