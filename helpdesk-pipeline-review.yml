@@ -20,7 +20,7 @@ trigger:
     exclude:
     - '*'
 
-# pr: none
+pr: none
 
 variables:
   # The K8S Cluster to deploy the release to
