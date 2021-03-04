@@ -6,19 +6,7 @@
 trigger:
   branches:
     include:
-    - '*'
-    exclude:
-    - master
-    - develop
-    - release
-  paths:
-    include:
-    - 'apps/helpdesk/*'
-    - 'pipelines/helpdesk/*'
-    - 'pipelines/core/helm3_template.yaml'
-    - 'pipelines/core/docker_template.yaml'
-    exclude:
-    - '*'
+    - stable-*
 
 pr: none
 
