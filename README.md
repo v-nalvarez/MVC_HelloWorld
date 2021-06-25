@@ -1,2 +1,2 @@
 # MVC_HelloWorld
-Lab triggers
+Lab triggers testing GitHub deploy
